@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/webextension.json",
+  "manifest_version": 3,
+  "name": "Nav Dev Session Extension",
+  "description": "Copies session cookies from *.dev.nav.no to localhost",
+  "version": "1.0.0",
+  "action": {
+    "default_icon": {
+      "192": "images/logo192.png",
+      "512": "images/logo512.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "permissions": ["cookies", "storage", "tabs"],
+  "host_permissions": ["https://*.dev.nav.no/*", "http://localhost/*"]
+}

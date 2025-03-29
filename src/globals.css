@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+body {
+  font-size: unset; /* Unset browser default font size. */
+}

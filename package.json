@@ -1,0 +1,32 @@
+{
+  "name": "nav-dev-session-extension",
+  "version": "1.0.0",
+  "description": "Browser extension to automatically copy session cookies from dev to localhost.",
+  "scripts": {
+    "build": "bun bun.build.ts",
+    "dev": "bun run build --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename=chrome-{name}-{version}.zip",
+    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename=firefox-{name}-{version}.zip"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "tailwindcss": "4.1.12"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.0",
+    "@iconify/react": "6.0.0",
+    "@types/bun": "1.2.20",
+    "@types/chrome": "0.1.4",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "@types/webextension-polyfill": "0.12.3",
+    "bun-plugin-tailwind": "0.0.15",
+    "typescript": "5.9.2",
+    "web-ext": "8.9.0",
+    "webextension-polyfill": "0.12.0"
+  }
+}
