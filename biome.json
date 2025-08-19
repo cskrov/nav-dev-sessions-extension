@@ -14,8 +14,13 @@
     }
   },
   "linter": {
+    "domains": {
+      "project": "recommended",
+      "react": "recommended"
+    },
     "enabled": true,
     "rules": {
+      "recommended": true,
       "nursery": {
         "noSecrets": "off",
         "useSortedClasses": { "level": "error", "fix": "safe", "options": {} }

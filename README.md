@@ -1,6 +1,6 @@
 # Nav Dev Session Extension
 
-Browser extension that copies session cookies (`sso-dev.nav.no` and `io.nais.wonderwall.session`) from `*.dev.nav.no` to `localhost`.
+Browser extension that adds session cookies (`sso-dev.nav.no` and `io.nais.wonderwall.session`) from `*.dev.nav.no` to requests to `localhost`.
 
 ## Why make this extension?
 Manually moving or copying session cookies from `dev` to `localhost` is a hassle.
@@ -8,7 +8,7 @@ The easiest way is to change the domain of the session cookie, which moves the c
 
 Moving is especially problematic because `dev` will set a new session cookie for `*.dev.nav.no`, and invalidate the session cookie for `localhost` the next time you interact with `dev`.
 
-This extension automatically copyies the session cookies from `dev` to `localhost`. Because it copies instead of moves, you can and should have both `dev` and `localhost` open at the same time.
+This extension automatically adds the session cookies from `dev` to all requests to `localhost`. You can and should have both `dev` and `localhost` open at the same time.
 
 ## How to use this extension?
 

@@ -23,7 +23,7 @@ if (existsSync('dist')) {
 }
 
 const { outputs, logs, success } = await Bun.build({
-  entrypoints: ['./src/popup.html', './src/background.ts'],
+  entrypoints: ['./app/popup.html', './background/background.ts'],
   minify: true,
   sourcemap: 'inline',
   target: 'browser',
@@ -97,7 +97,7 @@ for (const output of outputs) {
   for (const browser of BROWSERS) {
     const content = await output.text();
 
-    writeFileSync(join(`dist/${browser}`, output.path), content, 'utf-8');
+    writeFileSync(join(`dist/${browser}`, basename(output.path)), content, 'utf-8');
 
     console.log(
       `Successfully created (${fileCount}/${outputs.length}) "${basename(output.path)}" (${(output.size / 1000).toFixed(2)} kB) for ${BROWSER_NAMES[browser]}.`,

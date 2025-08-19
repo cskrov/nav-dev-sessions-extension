@@ -1,7 +1,7 @@
 import type { Tabs } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
-const getIsEnabled = (url: string | undefined): url is string => {
+export const getIsEnabled = (url: string | undefined): url is string => {
   if (url === undefined) {
     return false;
   }

@@ -45,6 +45,9 @@
   "[jsonc]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
   "tailwindCSS.experimental.classRegex": [
     ":\\s*?[\"'`]([^\"'`]*).*?,",
     "const\\s\\w*Classes\\s+=\\s+[\"'`]([^\"'`]*)",

@@ -10,19 +10,19 @@
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
     "isolatedModules": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     /* Paths */
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["*"]
     },
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "include": ["bun.build.ts", "src"]
+  "include": ["bun.build.ts", "app", "background", "lib"]
 }
