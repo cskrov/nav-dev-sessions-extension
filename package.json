@@ -1,14 +1,14 @@
 {
   "name": "nav-dev-sessions-extension",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Browser extension to map session cookies to localhost.",
   "scripts": {
     "build": "bun bun.build.ts",
     "dev": "bun run build --watch",
     "typecheck": "tsc --noEmit",
     "lint": "biome check",
-    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename=chrome-{name}-{version}.zip",
-    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename=firefox-{name}-{version}.zip"
+    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename=chrome.zip",
+    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename=firefox.zip"
   },
   "license": "MIT",
   "dependencies": {

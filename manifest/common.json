@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "name": "Nav Dev Sessions Extension",
   "description": "Enables the user to set up mappings from nav.no domains to localhost ports, to copy session cookies to all requests to localhost.",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "action": {
     "default_icon": {
       "192": "images/logo192.png",
