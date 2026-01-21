@@ -1,4 +1,4 @@
-# Nav Dev Session Extension
+# Nav Dev Sessions Extension
 
 Browser extension that adds session cookies to requests to `localhost`:
 - `io.nais.wonderwall.session` - Employee session cookie (works on all `*.nav.no` domains)
@@ -6,12 +6,12 @@ Browser extension that adds session cookies to requests to `localhost`:
 - `sso-nav.no` - End user session cookie for `prod` domains (`*.nav.no`, excluding `*.dev.nav.no`)
 
 ## Why make this extension?
-Manually moving or copying session cookies from `dev` to `localhost` is a hassle.
-The easiest way is to change the domain of the session cookie, which moves the cookie from `*.dev.nav.no` to `localhost`.
+Manually moving or copying session cookies from `dev` or `prod` to `localhost` is a hassle.
+The easiest way is to change the domain of the session cookie, which moves the cookie from `*.dev.nav.no` or `*.nav.no` to `localhost`.
 
-Moving is especially problematic because `dev` will set a new session cookie for `*.dev.nav.no`, and invalidate the session cookie for `localhost` the next time you interact with `dev`.
+Moving is especially problematic because `dev`/`prod` will set a new session cookie for `*.dev.nav.no` or `*.nav.no`, and invalidate the session cookie for `localhost` the next time you interact with `dev`/`prod`.
 
-This extension automatically adds the session cookies from `dev` to all requests to `localhost`. You can and should have both `dev` and `localhost` open at the same time.
+This extension automatically adds the session cookies from `dev`/`prod` to all requests to `localhost`. You can and should have both `dev`/`prod` and `localhost` open at the same time.
 
 ## How to use this extension?
 
@@ -26,9 +26,7 @@ This extension automatically adds the session cookies from `dev` to all requests
 
 ![Chrome](images/chrome.png)
 
-### Firefox :wrench:
-_Firefox appears to restrict the ability to interact with cookies the way this extension needs to. However, there is a release for Firefox available if you want to try it yourself._
-
+### Firefox
 1. Go to Firefox's Add-ons page: `about:addons`.
 2. Click the cog icon in the top right corner.
 3. Select "Debug Add-ons". A new tab will open: "Debugging - this-firefox" `about:debugging#/runtime/this-firefox`.
@@ -37,6 +35,3 @@ _Firefox appears to restrict the ability to interact with cookies the way this e
 _Firefox requires extensions to be signed for proper installation. I have not invested time in this, as the extension does not currently work within the cookie restrictions in Firefox._
 
 ![Firefox](images/firefox.png)
-
-#### TODO
-- Look into alternative ways to copy cookies in Firefox.

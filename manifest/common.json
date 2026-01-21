@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/webextension.json",
   "manifest_version": 3,
-  "name": "Nav Dev Session Extension",
-  "description": "Intercepts all requests to localhost and adds session cookies from *.dev.nav.no",
+  "name": "Nav Dev Sessions Extension",
+  "description": "Enables the user to set up mappings from nav.no domains to localhost ports, to copy session cookies to all requests to localhost.",
   "version": "1.0.0",
   "action": {
     "default_icon": {

@@ -4,7 +4,10 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "@nav-dev-session-extension"
+      "id": "@nav-dev-sessions-extension",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   }
 }

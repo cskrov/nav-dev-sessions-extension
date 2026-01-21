@@ -1,29 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { Cookies } from 'webextension-polyfill';
 import { Disable } from '@/app/disable';
-import { Sessions } from '@/app/sessions/sessions';
+import { AddMappingPage } from '@/app/mappings/add-mapping-page';
+import { MappingsList } from '@/app/mappings/mappings-list';
 import { Tag } from '@/app/tag';
-import { setBadgeCount } from '@/lib/badge';
-import { onSessionCookiesChange } from '@/lib/status';
+
+type Page = 'main' | 'add-mapping';
 
 const Popup = () => {
-  const [employeeCookies, setEmployeeCookies] = useState<Cookies.Cookie[]>([]);
-  const [userCookies, setUserCookies] = useState<Cookies.Cookie[]>([]);
+  const [page, setPage] = useState<Page>('main');
 
-  const hasEmployeeCookies = employeeCookies.length !== 0;
-  const hasUserCookies = userCookies.length !== 0;
-
-  useEffect(() => {
-    onSessionCookiesChange((e, u) => {
-      setEmployeeCookies(e);
-      setUserCookies(u);
-    });
-  }, []);
-
-  useEffect(() => {
-    setBadgeCount(hasEmployeeCookies, hasUserCookies);
-  }, [hasEmployeeCookies, hasUserCookies]);
+  if (page === 'add-mapping') {
+    return <AddMappingPage onBack={() => setPage('main')} />;
+  }
 
   return (
     <>
@@ -32,29 +21,13 @@ const Popup = () => {
         <Disable className="ml-auto" />
       </div>
 
-      <p className="mb-4 text-sm italic">
-        Extension that adds session cookies from <Tag>*.dev.nav.no</Tag> to requests to <Tag>localhost</Tag>.
-      </p>
-
-      <Sessions
-        userCookies={userCookies}
-        employeeCookies={employeeCookies}
-        hasUserCookies={hasUserCookies}
-        hasEmployeeCookies={hasEmployeeCookies}
-      />
+      <MappingsList onAddClick={() => setPage('add-mapping')} />
 
       <hr className="my-4" />
 
       <section className="flex flex-col gap-2 text-sm italic">
         <p>
-          It is recommended to have both <Tag>dev</Tag> and <Tag>localhost</Tag> open at the same time.
-        </p>
-
-        <p>
-          This extension only affects requests made to <Tag>localhost</Tag> with a 4 digit port.
-        </p>
-        <p>
-          Example: <Tag>localhost:3000</Tag>
+          This extension only affects requests made to <Tag>localhost</Tag> with the configured port mappings.
         </p>
 
         <p>

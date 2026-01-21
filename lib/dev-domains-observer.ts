@@ -1,5 +1,5 @@
 import browser, { type Tabs } from 'webextension-polyfill';
-import { DEV_DOMAIN_SUFFIX } from '@/lib/constants';
+import { NAV_DOMAIN_SUFFIX } from '@/lib/constants';
 
 type Listener = (domains: string[]) => void;
 
@@ -26,7 +26,7 @@ class DevDomainsObserver {
 
   private async init() {
     this.domains = await this.getStoredDomains();
-    const tabs = await browser.tabs.query({ url: DEV_DOMAIN_SUFFIX });
+    const tabs = await browser.tabs.query({ url: `*://*${NAV_DOMAIN_SUFFIX}/*` });
     this.handleTabs(...tabs);
   }
 
@@ -39,7 +39,7 @@ class DevDomainsObserver {
       const url = new URL(tab.url);
       const domain = url.hostname;
 
-      if (!domain.endsWith(DEV_DOMAIN_SUFFIX)) {
+      if (!domain.endsWith(NAV_DOMAIN_SUFFIX)) {
         return;
       }
 

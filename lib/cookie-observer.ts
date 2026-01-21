@@ -1,5 +1,5 @@
 import browser, { type Cookies } from 'webextension-polyfill';
-import { DEV_DOMAIN_SUFFIX } from '@/lib/constants';
+import { LOCALHOST, NAV_DOMAIN_SUFFIX } from '@/lib/constants';
 
 export type CookieChangeListener = (cookies: Cookies.Cookie[]) => void;
 
@@ -13,7 +13,7 @@ class CookieObserver {
     this.initPromise = this.init();
 
     browser.cookies.onChanged.addListener(async ({ cookie, removed }: Cookies.OnChangedChangeInfoType) => {
-      if (cookie.domain === 'localhost' || cookie.domain.endsWith(DEV_DOMAIN_SUFFIX)) {
+      if (cookie.domain === LOCALHOST || cookie.domain.endsWith(NAV_DOMAIN_SUFFIX)) {
         console.debug(`Cookie ${removed ? 'removed' : 'changed'} for ${cookie.domain}: ${cookie.name}=${cookie.value}`);
 
         const existing = this.cookies.get(cookie.domain);
@@ -41,10 +41,11 @@ class CookieObserver {
   }
 
   async init() {
-    const devCookies = await browser.cookies.getAll({ domain: DEV_DOMAIN_SUFFIX });
-    const localhostCookies = await browser.cookies.getAll({ domain: 'localhost' });
+    // Use firstPartyDomain: null for Firefox compatibility (First-Party Isolation)
+    const devCookies = await browser.cookies.getAll({ domain: NAV_DOMAIN_SUFFIX, firstPartyDomain: null });
+    const localhostCookies = await browser.cookies.getAll({ domain: LOCALHOST, firstPartyDomain: null });
 
-    this.cookies.set('localhost', localhostCookies);
+    this.cookies.set(LOCALHOST, localhostCookies);
 
     for (const cookie of devCookies) {
       const domain = cookie.domain;
@@ -52,7 +53,7 @@ class CookieObserver {
       const existing = this.cookies.get(domain);
 
       if (existing === undefined) {
-        this.cookies.set(domain, []);
+        this.cookies.set(domain, [cookie]);
       } else {
         existing.push(cookie);
       }
