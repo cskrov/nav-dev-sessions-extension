@@ -1,5 +1,7 @@
 import type { Tabs } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
+import { getBadgeCount } from '@/lib/badge';
+import { LOCALHOST } from '@/lib/constants';
 
 export const getIsEnabled = (url: string | undefined): url is string => {
   if (url === undefined) {
@@ -8,16 +10,17 @@ export const getIsEnabled = (url: string | undefined): url is string => {
 
   const { hostname } = new URL(url);
 
-  return hostname === 'localhost' || hostname.endsWith('.dev.nav.no');
+  return hostname === LOCALHOST || hostname.endsWith('.nav.no');
 };
 
 const updateBadge = ({ url, id }: Tabs.Tab) => {
   if (getIsEnabled(url)) {
     browser.action.enable(id);
+    browser.action.setBadgeText({ text: getBadgeCount().toString(), tabId: id });
     console.debug(`Enabled extension for tab ${id} ${url}`);
   } else {
     browser.action.disable(id);
-    browser.action.setBadgeText({ text: '' });
+    browser.action.setBadgeText({ text: '', tabId: id });
   }
 };
 
