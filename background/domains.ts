@@ -23,6 +23,10 @@ const listener = async (url: string | undefined) => {
     return;
   }
 
+  if (!hostname.endsWith('.nav.no')) {
+    return;
+  }
+
   const existingDomains = await getStoredDomains();
 
   if (existingDomains.includes(hostname)) {
