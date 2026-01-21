@@ -1,40 +1,61 @@
-name: Package
+name: Build and Release
 
 on:
+  workflow_dispatch:
   push:
-    tags:
-      - v*
+    branches:
+      - main
+    paths-ignore:
+      - ".github/**"
+      - ".zed/**"
+      - ".vscode/**"
+      - ".gitattributes"
+      - ".gitignore"
+      - ".tool-versions"
+      - "AGENTS.md"
+      - "README.md"
+      - "screenshots/**"
+      - "biome.json"
 
 jobs:
-  package:
-    name: Package
+  build-and-release:
+    name: Build and Release
     permissions:
       contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      - name: Build extension
+        id: build
+        uses: ./.github/actions/build-extension
 
-      - name: Install dependencies
-        run: bun i --frozen-lockfile
-
-      - name: Build
-        run: bun run build
-
-      - name: Package
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Sign Firefox extension
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.WEB_EXT_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.WEB_EXT_API_SECRET }}
         run: |
-          bun run chrome:pack
-          bun run firefox:pack
+          bun run firefox:sign
+          mv dist/*.xpi dist/nav_dev_sessions_extension-firefox.xpi
 
       - name: Release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/*.zip"
+          tag: ${{ steps.build.outputs.version }}
+          artifacts: "dist/*.zip,dist/*.xpi"
           generateReleaseNotes: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: gh-pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

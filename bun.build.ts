@@ -17,10 +17,32 @@ const BROWSER_NAMES: Record<Browser, string> = {
 
 const BROWSERS = Object.values(Browser);
 
+const getVersion = (): string => {
+  const version = process.env.VERSION;
+
+  if (version !== undefined) {
+    console.log(`Using version from VERSION environment variable: ${version}`);
+    return version;
+  }
+
+  // Generate version from current date/time in UTC: YYYY.M.D.minuteOfDay
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth() + 1;
+  const day = now.getUTCDate();
+  const minuteOfDay = now.getUTCHours() * 60 + now.getUTCMinutes();
+
+  const generatedVersion = `${year}.${month}.${day}.${minuteOfDay}`;
+  console.log(`Generated version from current date/time: ${generatedVersion}`);
+  return generatedVersion;
+};
+
 if (existsSync('dist')) {
   rmSync('dist', { recursive: true, force: true }); // Delete the dist folder before build.
   console.log('Deleted dist folder before build.\n');
 }
+
+const version = getVersion();
 
 const { outputs, logs, success } = await Bun.build({
   entrypoints: ['./app/popup.html', './background/background.ts'],
@@ -44,6 +66,10 @@ const { outputs, logs, success } = await Bun.build({
             const browserManifest = Bun.file(`manifest/${browser}.json`);
             const exists = await browserManifest.exists();
             const manifest = exists ? { ...common, ...(await browserManifest.json()) } : common;
+
+            // Inject version
+            manifest.version = version;
+
             // biome-ignore lint/complexity/useLiteralKeys: Delete the $schema property from the manifest.
             delete manifest['$schema'];
 

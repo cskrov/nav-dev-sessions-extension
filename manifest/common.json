@@ -1,9 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/webextension.json",
   "manifest_version": 3,
-  "name": "Nav Dev Session Extension",
-  "description": "Intercepts all requests to localhost and adds session cookies from *.dev.nav.no",
-  "version": "1.0.0",
+  "name": "Nav Dev Sessions Extension",
+  "description": "Enables the user to set up mappings from nav.no domains to localhost ports, to copy session cookies to all requests to localhost.",
+  "icons": {
+    "192": "images/logo192.png",
+    "512": "images/logo512.png"
+  },
   "action": {
     "default_icon": {
       "192": "images/logo192.png",
@@ -12,5 +15,5 @@
     "default_popup": "popup.html"
   },
   "permissions": ["cookies", "storage", "tabs", "declarativeNetRequest"],
-  "host_permissions": ["*://*.dev.nav.no/", "*://localhost/"]
+  "host_permissions": ["*://*.nav.no/", "*://localhost/"]
 }
