@@ -1,7 +1,7 @@
 import browser, { type Storage } from 'webextension-polyfill';
 
 export const onStoredDomainsChange = (callback: (domains: string[]) => void) => {
-  const listener = (changes: Storage.StorageAreaWithUsageOnChangedChangesType) => {
+  const listener = (changes: Storage.StorageAreaOnChangedChangesType) => {
     if ('domains' in changes) {
       const { newValue } = changes.domains;
 

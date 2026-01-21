@@ -16,7 +16,7 @@ export const Disable = ({ className }: Props) => {
       setDisabled(typeof disabled === 'boolean' ? disabled : false);
     });
 
-    const listener = (changes: Storage.StorageAreaWithUsageOnChangedChangesType) => {
+    const listener = (changes: Storage.StorageAreaOnChangedChangesType) => {
       if ('disabled' in changes) {
         const { disabled } = changes;
         console.log('Disable extension changed:', disabled);

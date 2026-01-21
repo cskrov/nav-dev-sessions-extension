@@ -55,7 +55,7 @@ export const Session = ({ exists, icon, children, cookies, variant }: Props) => 
 
   // Listen for changes in synced storage.
   useEffect(() => {
-    const listener = ({ [variant]: preferredDomain }: Storage.StorageAreaWithUsageOnChangedChangesType) => {
+    const listener = ({ [variant]: preferredDomain }: Storage.StorageAreaOnChangedChangesType) => {
       console.log('Preferred domain changed:', preferredDomain);
 
       if (preferredDomain === undefined) {
@@ -105,26 +105,28 @@ export const Session = ({ exists, icon, children, cookies, variant }: Props) => 
           </span>
         </DomainOptionContainer>
 
-        {domains.map((domain) => {
-          const cookie = cookies.find((cookie) => cookie.domain === domain);
-          const hasCookie = cookie !== undefined;
-          const checked = preferredDomain === domain;
+        {domains
+          .toSorted((a, b) => a.localeCompare(b))
+          .map((domain) => {
+            const cookie = cookies.find((cookie) => cookie.domain === domain);
+            const hasCookie = cookie !== undefined;
+            const checked = preferredDomain === domain;
 
-          return (
-            <DomainOption
-              key={domain}
-              domain={domain}
-              checked={checked}
-              loading={loading}
-              onClick={() => savePreferredDomain(domain)}
-              onDelete={hasCookie ? () => deleteCookie(cookie) : () => deleteStoredDomain(domain)}
-              variant={getVariant(hasCookie, checked)}
-              icon={getIcon(hasCookie)}
-              deleteTitle={hasCookie ? 'Delete cookie' : 'Delete domain'}
-              deleteIcon={hasCookie ? 'mdi:cookie-off-outline' : 'mdi:delete'}
-            />
-          );
-        })}
+            return (
+              <DomainOption
+                key={domain}
+                domain={domain}
+                checked={checked}
+                loading={loading}
+                onClick={() => savePreferredDomain(domain)}
+                onDelete={hasCookie ? () => deleteCookie(cookie) : () => deleteStoredDomain(domain)}
+                variant={getVariant(hasCookie, checked)}
+                icon={getIcon(hasCookie)}
+                deleteTitle={hasCookie ? 'Delete cookie' : 'Delete domain'}
+                deleteIcon={hasCookie ? 'mdi:cookie-off-outline' : 'mdi:delete'}
+              />
+            );
+          })}
       </div>
 
       {cookies.length > 1 ? (

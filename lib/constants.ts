@@ -6,3 +6,5 @@ export enum CookieName {
 export const COOKIE_NAMES = Object.values(CookieName);
 
 export const isCookieName = (name: string): name is CookieName => COOKIE_NAMES.includes(name as CookieName);
+
+export const DEV_DOMAIN_SUFFIX = '.dev.nav.no';

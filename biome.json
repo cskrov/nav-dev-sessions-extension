@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "assist": {
     "enabled": true,
     "actions": {
@@ -22,7 +22,6 @@
     "rules": {
       "recommended": true,
       "nursery": {
-        "noSecrets": "off",
         "useSortedClasses": { "level": "error", "fix": "safe", "options": {} }
       },
       "correctness": {
@@ -47,6 +46,9 @@
       },
       "complexity": {
         "useSimplifiedLogicExpression": "off"
+      },
+      "security": {
+        "noSecrets": "off"
       }
     }
   },

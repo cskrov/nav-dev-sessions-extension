@@ -28,6 +28,8 @@ export const handleEnabled = async () => {
     }
   });
 
+  browser.tabs.onCreated.addListener(updateBadge);
+
   const tabs = await browser.tabs.query({});
 
   for (const tab of tabs) {

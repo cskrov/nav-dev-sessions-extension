@@ -7,17 +7,27 @@ export const startDomainsSync = () => {
 };
 
 const listener = async (url: string | undefined) => {
-  if (url === undefined) {
+  if (url === undefined || !URL.canParse(url)) {
     return;
   }
 
-  const domain = new URL(url).hostname;
+  const parsed = URL.parse(url);
+
+  if (parsed === null) {
+    return;
+  }
+
+  const { hostname, protocol } = parsed;
+
+  if (protocol !== 'http:' && protocol !== 'https:') {
+    return;
+  }
 
   const existingDomains = await getStoredDomains();
 
-  if (existingDomains.includes(domain)) {
+  if (existingDomains.includes(hostname)) {
     return;
   }
 
-  browser.storage.sync.set({ domains: [...existingDomains, domain] });
+  browser.storage.sync.set({ domains: [...existingDomains, hostname] });
 };
