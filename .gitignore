@@ -1,4 +1,11 @@
+.env
 dist/
 node_modules/
 .tsbuildinfo
 .DS_Store
+
+# Firefox review source package
+source-package.zip
+
+# GitHub Pages output (generated during release)
+gh-pages/

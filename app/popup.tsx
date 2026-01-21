@@ -1,75 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import { Icon } from '@iconify/react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { Cookies } from 'webextension-polyfill';
 import { Disable } from '@/app/disable';
-import { Sessions } from '@/app/sessions/sessions';
-import { Tag } from '@/app/tag';
-import { setBadgeCount } from '@/lib/badge';
-import { onSessionCookiesChange } from '@/lib/status';
+import { InfoPage } from '@/app/info-page';
+import { AddDomainPage } from '@/app/mappings/add-domain-page';
+import { AddMappingPage } from '@/app/mappings/add-mapping-page';
+import { EditMappingPage } from '@/app/mappings/edit-mapping-page';
+import { MappingsList } from '@/app/mappings/mappings-list';
+import { PageContainer } from '@/app/page-container';
+import { PageHeader } from '@/app/page-header';
+
+enum Page {
+  Main,
+  AddMapping,
+  EditMapping,
+  AddDomain,
+  Info,
+}
+
+type PageState =
+  | { type: Page.Main }
+  | { type: Page.AddMapping }
+  | { type: Page.EditMapping; port: number }
+  | { type: Page.AddDomain; port: number }
+  | { type: Page.Info };
 
 const Popup = () => {
-  const [employeeCookies, setEmployeeCookies] = useState<Cookies.Cookie[]>([]);
-  const [userCookies, setUserCookies] = useState<Cookies.Cookie[]>([]);
+  const [page, setPage] = useState<PageState>({ type: Page.Main });
 
-  const hasEmployeeCookies = employeeCookies.length !== 0;
-  const hasUserCookies = userCookies.length !== 0;
+  if (page.type === Page.AddMapping) {
+    return <AddMappingPage onBack={() => setPage({ type: Page.Main })} />;
+  }
 
-  useEffect(() => {
-    onSessionCookiesChange((e, u) => {
-      setEmployeeCookies(e);
-      setUserCookies(u);
-    });
-  }, []);
+  if (page.type === Page.EditMapping) {
+    return (
+      <EditMappingPage
+        port={page.port}
+        onBack={() => setPage({ type: Page.Main })}
+        onAddNew={() => setPage({ type: Page.AddDomain, port: page.port })}
+      />
+    );
+  }
 
-  useEffect(() => {
-    setBadgeCount(hasEmployeeCookies, hasUserCookies);
-  }, [hasEmployeeCookies, hasUserCookies]);
+  if (page.type === Page.AddDomain) {
+    return <AddDomainPage port={page.port} onBack={() => setPage({ type: Page.EditMapping, port: page.port })} />;
+  }
+
+  if (page.type === Page.Info) {
+    return <InfoPage onBack={() => setPage({ type: Page.Main })} />;
+  }
 
   return (
-    <>
-      <div className="mb-2 flex flex-row items-start gap-2 whitespace-nowrap">
-        <h1 className="font-bold">Nav Dev Sessions Extension</h1>
-        <Disable className="ml-auto" />
-      </div>
+    <PageContainer>
+      <PageHeader
+        action={
+          <div className="flex flex-row items-center gap-2">
+            <Disable />
+            <button
+              type="button"
+              onClick={() => setPage({ type: Page.Info })}
+              className="cursor-pointer text-gray-400 hover:text-white"
+              title="Info"
+            >
+              <Icon icon="mdi:information-outline" className="text-xl" />
+            </button>
+          </div>
+        }
+      >
+        Session cookie mappings
+      </PageHeader>
 
-      <p className="mb-4 text-sm italic">
-        Extension that adds session cookies from <Tag>*.dev.nav.no</Tag> to requests to <Tag>localhost</Tag>.
+      <p className="text-gray-400 text-sm">
+        Session cookies are copied for the following localhost ports and domain pairs:
       </p>
 
-      <Sessions
-        userCookies={userCookies}
-        employeeCookies={employeeCookies}
-        hasUserCookies={hasUserCookies}
-        hasEmployeeCookies={hasEmployeeCookies}
+      <MappingsList
+        onAddClick={() => setPage({ type: Page.AddMapping })}
+        onEditClick={(port) => setPage({ type: Page.EditMapping, port })}
       />
-
-      <hr className="my-4" />
-
-      <section className="flex flex-col gap-2 text-sm italic">
-        <p>
-          It is recommended to have both <Tag>dev</Tag> and <Tag>localhost</Tag> open at the same time.
-        </p>
-
-        <p>
-          This extension only affects requests made to <Tag>localhost</Tag> with a 4 digit port.
-        </p>
-        <p>
-          Example: <Tag>localhost:3000</Tag>
-        </p>
-
-        <p>
-          Source code:{' '}
-          <a
-            href="https://github.com/cskrov/nav-dev-sessions-extension"
-            target="_blank"
-            className="underline hover:text-blue-500"
-            rel="noopener"
-          >
-            GitHub
-          </a>
-        </p>
-      </section>
-    </>
+    </PageContainer>
   );
 };
 

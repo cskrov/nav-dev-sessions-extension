@@ -8,40 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: actions/checkout@v6
+
+      - name: Build extension
+        uses: ./.github/actions/build-extension
         with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-          
-      - name: Typecheck
-        run: bun run typecheck
-            
-      - name: Lint
-        run: bun run lint
-    
-      - name: Test
-        if: false # No unit tests yet
-        run: bun test
-
-      - name: Build
-        run: bun run build
-      
-      - name: Package
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          bun run chrome:pack
-          bun run firefox:pack
-
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: dist/*.zip
-          generateReleaseNotes: true
-          draft: true
-          name: ${{ github.ref_name }}
+          run-checks: "true"
