@@ -1,14 +1,16 @@
 {
-  "name": "nav-dev-session-extension",
-  "version": "1.0.0",
-  "description": "Browser extension to automatically copy session cookies to localhost.",
+  "name": "nav-dev-sessions-extension",
+  "version": "0.0.0",
+  "description": "Browser extension to map session cookies to localhost.",
   "scripts": {
     "build": "bun bun.build.ts",
     "dev": "bun run build --watch",
     "typecheck": "tsc --noEmit",
     "lint": "biome check",
-    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename=chrome-{name}-{version}.zip",
-    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename=firefox-{name}-{version}.zip"
+    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename={name}-chrome.zip",
+    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename={name}-firefox.zip",
+    "firefox:sign": "web-ext sign --source-dir=dist/firefox --artifacts-dir=dist --channel=unlisted --upload-source-code=source-package.zip",
+    "generate-update-manifest": "bun run scripts/generate-update-manifest.ts"
   },
   "license": "MIT",
   "dependencies": {

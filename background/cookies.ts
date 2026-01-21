@@ -1,41 +1,31 @@
-import { type CookieChangeListener, cookieObserver } from '@/lib/cookie-observer';
-import { isEmployeeCookie, isUserCookie, setLocalhostCookie } from '@/lib/cookies';
-import { preferredEmployeeDomainObserver } from '@/lib/preferred-domain-observer';
+import { cookieObserver } from '@/lib/cookie-observer';
+import { onMappingsChange } from '@/lib/mappings';
 
 export const startCookiesSync = () => {
-  let domain: string | null = null;
+  const unsubscribers: Map<string, () => void> = new Map();
 
-  preferredEmployeeDomainObserver.addListener((newDomain) => {
-    if (newDomain === domain) {
-      return;
+  onMappingsChange((mappings) => {
+    // Get unique domains from mappings
+    const domains = new Set(mappings.map((m) => m.domain));
+
+    // Remove listeners for domains that are no longer in mappings
+    for (const [domain, unsubscribe] of unsubscribers) {
+      if (!domains.has(domain)) {
+        unsubscribe();
+        unsubscribers.delete(domain);
+        console.log('Removed cookie listener for domain', domain);
+      }
     }
 
-    console.log('Preferred employee domain changed to', newDomain);
-
-    if (domain !== null) {
-      // If the old domain is not null, remove the listener for the old domain.
-      cookieObserver.removeListener(domain, setCookies);
+    // Add listeners for new domains
+    for (const domain of domains) {
+      if (!unsubscribers.has(domain)) {
+        const unsubscribe = cookieObserver.addListener(domain, (cookies) => {
+          console.log(`Cookies changed for ${domain}:`, cookies);
+        });
+        unsubscribers.set(domain, unsubscribe);
+        console.log('Added cookie listener for domain', domain);
+      }
     }
-
-    if (newDomain !== null) {
-      // If the new domain is not null, add the listener for the new domain.
-      cookieObserver.addListener(newDomain, setCookies);
-    }
-
-    // Update the current domain.
-    domain = newDomain;
   });
-};
-
-const setCookies: CookieChangeListener = async (cookies) => {
-  const employeeCookie = cookies.find(isEmployeeCookie);
-  const userCookie = cookies.find(isUserCookie);
-
-  if (employeeCookie !== undefined) {
-    setLocalhostCookie(employeeCookie);
-  }
-
-  if (userCookie !== undefined) {
-    setLocalhostCookie(userCookie);
-  }
 };

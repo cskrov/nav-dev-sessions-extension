@@ -6,7 +6,6 @@
 - Build dev (watch): `bun dev`
 - Run unit tests: `bun test`
 - Check types: `bun typecheck`
-- Lint code: `bun lint`
 - Lint and fix code: `bun lint --fix`
 
 ## Code style
@@ -15,8 +14,10 @@
 - No type coercion
 - No single line if statements
 - Use arrow functions for callbacks
+- Use implicit returns for single expression functions
 - Use discriminated unions for type narrowing
 - Avoid type casting
 - Place helper functions after main functions
 - Use early returns to reduce nesting
 - Prefer ternary expression in TSX/JSX over guard and default operators
+- Prefer `.toString()` and other methods over `String()`.
