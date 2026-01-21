@@ -1,75 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import { Icon } from '@iconify/react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { Cookies } from 'webextension-polyfill';
 import { Disable } from '@/app/disable';
-import { Sessions } from '@/app/sessions/sessions';
-import { Tag } from '@/app/tag';
-import { setBadgeCount } from '@/lib/badge';
-import { onSessionCookiesChange } from '@/lib/status';
+import { InfoPage } from '@/app/info-page';
+import { AddDomainPage } from '@/app/mappings/add-domain-page';
+import { AddMappingPage } from '@/app/mappings/add-mapping-page';
+import { EditMappingPage } from '@/app/mappings/edit-mapping-page';
+import { MappingsList } from '@/app/mappings/mappings-list';
+import { PageContainer } from '@/app/page-container';
+import { PageHeader } from '@/app/page-header';
+
+type Page =
+  | { type: 'main' }
+  | { type: 'add-mapping' }
+  | { type: 'edit-mapping'; port: number }
+  | { type: 'add-domain'; port: number }
+  | { type: 'info' };
 
 const Popup = () => {
-  const [employeeCookies, setEmployeeCookies] = useState<Cookies.Cookie[]>([]);
-  const [userCookies, setUserCookies] = useState<Cookies.Cookie[]>([]);
+  const [page, setPage] = useState<Page>({ type: 'main' });
 
-  const hasEmployeeCookies = employeeCookies.length !== 0;
-  const hasUserCookies = userCookies.length !== 0;
+  if (page.type === 'add-mapping') {
+    return <AddMappingPage onBack={() => setPage({ type: 'main' })} />;
+  }
 
-  useEffect(() => {
-    onSessionCookiesChange((e, u) => {
-      setEmployeeCookies(e);
-      setUserCookies(u);
-    });
-  }, []);
+  if (page.type === 'edit-mapping') {
+    return (
+      <EditMappingPage
+        port={page.port}
+        onBack={() => setPage({ type: 'main' })}
+        onAddNew={() => setPage({ type: 'add-domain', port: page.port })}
+      />
+    );
+  }
 
-  useEffect(() => {
-    setBadgeCount(hasEmployeeCookies, hasUserCookies);
-  }, [hasEmployeeCookies, hasUserCookies]);
+  if (page.type === 'add-domain') {
+    return <AddDomainPage port={page.port} onBack={() => setPage({ type: 'edit-mapping', port: page.port })} />;
+  }
+
+  if (page.type === 'info') {
+    return <InfoPage onBack={() => setPage({ type: 'main' })} />;
+  }
 
   return (
-    <>
-      <div className="mb-2 flex flex-row items-start gap-2 whitespace-nowrap">
-        <h1 className="font-bold">Nav Dev Sessions Extension</h1>
-        <Disable className="ml-auto" />
-      </div>
+    <PageContainer>
+      <PageHeader
+        action={
+          <div className="flex flex-row items-center gap-2">
+            <Disable />
+            <button
+              type="button"
+              onClick={() => setPage({ type: 'info' })}
+              className="cursor-pointer text-gray-400 hover:text-white"
+              title="Info"
+            >
+              <Icon icon="mdi:information-outline" className="text-xl" />
+            </button>
+          </div>
+        }
+      >
+        Mappings
+      </PageHeader>
 
-      <p className="mb-4 text-sm italic">
-        Extension that adds session cookies from <Tag>*.dev.nav.no</Tag> to requests to <Tag>localhost</Tag>.
-      </p>
+      <p className="text-gray-400 text-sm">Session cookie mappings:</p>
 
-      <Sessions
-        userCookies={userCookies}
-        employeeCookies={employeeCookies}
-        hasUserCookies={hasUserCookies}
-        hasEmployeeCookies={hasEmployeeCookies}
+      <MappingsList
+        onAddClick={() => setPage({ type: 'add-mapping' })}
+        onEditClick={(port) => setPage({ type: 'edit-mapping', port })}
       />
-
-      <hr className="my-4" />
-
-      <section className="flex flex-col gap-2 text-sm italic">
-        <p>
-          It is recommended to have both <Tag>dev</Tag> and <Tag>localhost</Tag> open at the same time.
-        </p>
-
-        <p>
-          This extension only affects requests made to <Tag>localhost</Tag> with a 4 digit port.
-        </p>
-        <p>
-          Example: <Tag>localhost:3000</Tag>
-        </p>
-
-        <p>
-          Source code:{' '}
-          <a
-            href="https://github.com/cskrov/nav-dev-sessions-extension"
-            target="_blank"
-            className="underline hover:text-blue-500"
-            rel="noopener"
-          >
-            GitHub
-          </a>
-        </p>
-      </section>
-    </>
+    </PageContainer>
   );
 };
 
