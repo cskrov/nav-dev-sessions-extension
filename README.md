@@ -13,25 +13,11 @@ Moving is especially problematic because `dev`/`prod` will set a new session coo
 
 This extension automatically adds the session cookies from `dev`/`prod` to all requests to `localhost`. You can and should have both `dev`/`prod` and `localhost` open at the same time.
 
-## How to use this extension?
+## Packing
 
-1. Download the latest version of the extension from the [releases page](https://github.com/christianskrovseth/nav-dev-sessions-extension/releases).
+1. Install [Bun](https://bun.sh)
+2. Install dependencies - `bun i`
+3. Build the extension - `bun run build`
+4. Pack the extension - `bun run firefox:pack`
 
-### Chrome
-1. Go to [Chrome's Extensions page](chrome://extensions).
-2. Enable "Developer mode" in the top right corner.
-3. Extract the downloaded ZIP file to a folder.
-4. Click "Load unpacked" and select the folder where the extension is located.
-5. Pin the extension to the toolbar (optional).
-
-![Chrome](images/chrome.png)
-
-### Firefox
-1. Go to Firefox's Add-ons page: `about:addons`.
-2. Click the cog icon in the top right corner.
-3. Select "Debug Add-ons". A new tab will open: "Debugging - this-firefox" `about:debugging#/runtime/this-firefox`.
-4. Click "Load Temporary Add-on" and select the downloaded ZIP file.
-
-_Firefox requires extensions to be signed for proper installation. I have not invested time in this, as the extension does not currently work within the cookie restrictions in Firefox._
-
-![Firefox](images/firefox.png)
+The built and packed extension is in the `/dist` directory.
