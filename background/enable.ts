@@ -1,5 +1,6 @@
 import type { Tabs } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
+import { LOCALHOST } from '@/lib/constants';
 
 export const getIsEnabled = (url: string | undefined): url is string => {
   if (url === undefined) {
@@ -8,7 +9,7 @@ export const getIsEnabled = (url: string | undefined): url is string => {
 
   const { hostname } = new URL(url);
 
-  return hostname === 'localhost' || hostname.endsWith('.dev.nav.no');
+  return hostname === LOCALHOST || hostname.endsWith('.nav.no');
 };
 
 const updateBadge = ({ url, id }: Tabs.Tab) => {

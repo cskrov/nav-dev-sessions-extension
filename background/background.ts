@@ -1,132 +1,268 @@
 import browser, { type Cookies } from 'webextension-polyfill';
 import { startCookiesSync } from '@/background/cookies';
-import { startDomainsSync } from '@/background/domains';
 import { handleEnabled } from '@/background/enable';
 import { setBadgeCount } from '@/lib/badge';
-import type { CookieName } from '@/lib/constants';
-import { cookieObserver } from '@/lib/cookie-observer';
 import {
-  type EmployeeCookie,
-  getLocalhostCookies,
-  getSessionCookiesForPreferredDomain,
-  isEmployeeCookie,
-  isUserCookie,
-  onPreferredDomainCookieChange,
-  type UserCookie,
-} from '@/lib/cookies';
-import { preferredEmployeeDomainObserver, preferredUserDomainObserver } from '@/lib/preferred-domain-observer';
-
-const SESSION_RULE_ID = 1;
+  CookieName,
+  EXTERNAL_DOMAINS_DEV,
+  EXTERNAL_DOMAINS_PROD,
+  getAllCookies,
+  getUserCookieName,
+  isDevDomain,
+  LOCALHOST,
+  NAV_DOMAIN_SUFFIX,
+} from '@/lib/constants';
+import { cookieObserver } from '@/lib/cookie-observer';
+import { domainsObserver } from '@/lib/domains-observer';
+import { getActiveMappings, type Mapping, onMappingsChange } from '@/lib/mappings';
 
 startCookiesSync();
 
-startDomainsSync();
-
-cookieObserver.addListener('kabal.intern.dev.nav.no', (cookies) => {
-  console.log('Kabal cookies changed:', cookies);
+// Initialize dev domains observer to track visited domains
+domainsObserver.getDomains().then((domains) => {
+  console.log('Initial dev domains:', domains);
 });
 
-const init = async () => {
-  browser.action.setBadgeTextColor({ color: '#FFFFFF' });
+interface MappingCookies {
+  mapping: Mapping;
+  employeeCookie: Cookies.Cookie | null;
+  userCookie: Cookies.Cookie | null;
+}
 
-  const { disabled } = await browser.storage.sync.get('disabled');
+// Store cleanup functions for listeners that need to be removed when disabled
+let cleanupFunctions: (() => void)[] = [];
+let isInitialized = false;
 
-  if (disabled !== undefined && disabled === true) {
-    try {
-      // Remove any existing rule when extension is disabled.
-      await browser.declarativeNetRequest.updateSessionRules({ removeRuleIds: [SESSION_RULE_ID] });
-    } catch (error) {
-      console.error(`Error creating rules: ${error}`);
+const getCurrentRuleIds = async (): Promise<number[]> => {
+  const rules = await browser.declarativeNetRequest.getSessionRules();
+  return rules.map((r) => r.id);
+};
+
+const updateRulesForMappings = async (allMappings: Mapping[]) => {
+  // Only use active mappings for rules
+  const mappings = allMappings.filter((m) => m.active);
+  const existingRuleIds = await getCurrentRuleIds();
+
+  // Get cookies for each mapping
+  const mappingCookies: MappingCookies[] = await Promise.all(
+    mappings.map(async (mapping) => {
+      const cookies = await cookieObserver.getCookies(mapping.domain);
+      const employeeCookie = cookies.find((c) => c.name === CookieName.EMPLOYEE) ?? null;
+      const expectedUserCookieName = getUserCookieName(mapping.domain);
+      const userCookie = cookies.find((c) => c.name === expectedUserCookieName) ?? null;
+      return { mapping, employeeCookie, userCookie };
+    }),
+  );
+
+  // Update badge count based on any active cookies
+  const hasEmployeeCookie = mappingCookies.some((mc) => mc.employeeCookie !== null);
+  const hasUserCookie = mappingCookies.some((mc) => mc.userCookie !== null);
+  setBadgeCount(hasEmployeeCookie, hasUserCookie);
+
+  // Create rules for each mapping
+  const rules: browser.DeclarativeNetRequest.Rule[] = [];
+
+  for (const { mapping, employeeCookie, userCookie } of mappingCookies) {
+    if (employeeCookie === null && userCookie === null) {
+      // No cookies for this mapping, skip rule creation
+      continue;
     }
 
-    return;
+    const localhostCookies = await getAllCookies({ domain: LOCALHOST });
+    const allCookies = localhostCookies.concat(
+      employeeCookie !== null ? [employeeCookie] : [],
+      userCookie !== null ? [userCookie] : [],
+    );
+
+    const cookieNames = [employeeCookie?.name, userCookie?.name].filter((n): n is CookieName => n !== undefined);
+
+    const otherResourceTypes: browser.DeclarativeNetRequest.ResourceType[] = [
+      'main_frame',
+      'sub_frame',
+      'xmlhttprequest',
+      'websocket',
+      'script',
+      'stylesheet',
+      'image',
+      'font',
+      'media',
+      'ping',
+      'other',
+    ];
+
+    const requestHeaders: browser.DeclarativeNetRequest.RuleActionRequestHeadersItemType[] = [
+      {
+        header: 'Cookie',
+        operation: 'set',
+        value: stringify(...allCookies),
+      },
+      {
+        header: 'Nav-Dev-Sessions-Extension',
+        operation: 'set',
+        value: cookieNames.join(', '),
+      },
+    ];
+
+    // Rule for localhost main_frame requests (initial page load, no initiator restriction for SSR support)
+    const localhostMainFrameRule: browser.DeclarativeNetRequest.Rule = {
+      id: mapping.port, // Use port as rule ID for uniqueness
+      action: {
+        type: 'modifyHeaders',
+        requestHeaders,
+      },
+      condition: {
+        requestDomains: [LOCALHOST],
+        regexFilter: `^(?:https?|wss?)://localhost:${mapping.port}(?:$|/.*)`,
+        resourceTypes: ['main_frame'],
+      },
+      priority: 10,
+    };
+
+    rules.push(localhostMainFrameRule);
+
+    // Rule for localhost non-main_frame requests (XHR, fetch, etc. - require localhost initiator)
+    const localhostOtherRule: browser.DeclarativeNetRequest.Rule = {
+      id: mapping.port + 50000, // Offset to ensure unique rule ID
+      action: {
+        type: 'modifyHeaders',
+        requestHeaders,
+      },
+      condition: {
+        requestDomains: [LOCALHOST],
+        initiatorDomains: [LOCALHOST],
+        regexFilter: `^(?:https?|wss?)://localhost:${mapping.port}(?:$|/.*)`,
+        resourceTypes: otherResourceTypes,
+      },
+      priority: 10,
+    };
+
+    rules.push(localhostOtherRule);
+
+    // Rules for external domain requests initiated from localhost
+    // Use port + (index + 1) * 100000 offset to ensure unique rule IDs
+    const externalDomains = isDevDomain(mapping.domain) ? EXTERNAL_DOMAINS_DEV : EXTERNAL_DOMAINS_PROD;
+
+    for (const [index, externalDomain] of externalDomains.entries()) {
+      const externalRule: browser.DeclarativeNetRequest.Rule = {
+        id: mapping.port + (index + 1) * 100000,
+        action: {
+          type: 'modifyHeaders',
+          requestHeaders,
+          responseHeaders: [
+            {
+              header: 'Access-Control-Allow-Origin',
+              operation: 'set',
+              value: `http://localhost:${mapping.port}`,
+            },
+            {
+              header: 'Access-Control-Allow-Credentials',
+              operation: 'set',
+              value: 'true',
+            },
+          ],
+        },
+        condition: {
+          requestDomains: [externalDomain],
+          initiatorDomains: [LOCALHOST],
+          resourceTypes: otherResourceTypes,
+        },
+        priority: 10,
+      };
+
+      rules.push(externalRule);
+    }
   }
 
-  let preferredEmployeeDomain = await preferredEmployeeDomainObserver.getPreferredDomain();
-  let preferredUserDomain = await preferredUserDomainObserver.getPreferredDomain();
+  try {
+    await browser.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: existingRuleIds,
+      addRules: rules,
+    });
 
-  const employeeDomainCookies: Cookies.Cookie[] =
-    preferredEmployeeDomain === null ? [] : await cookieObserver.getCookies(preferredEmployeeDomain);
-  const userDomainCookies: Cookies.Cookie[] =
-    preferredUserDomain === null ? [] : await cookieObserver.getCookies(preferredUserDomain);
+    console.log('Updated rules:', rules);
+  } catch (error) {
+    console.error(`Error updating rules: ${error}`);
+  }
+};
 
-  const employeeSessionCookie: EmployeeCookie | undefined = employeeDomainCookies.find(isEmployeeCookie);
-  const userSessionCookie: UserCookie | undefined = userDomainCookies.find(isUserCookie);
+const stringify = (...cookies: Cookies.Cookie[]): string =>
+  cookies.map(({ name, value }) => `${name}=${value}`).join('; ');
 
-  preferredEmployeeDomainObserver.addListener((domain) => {
-    preferredEmployeeDomain = domain;
+const cleanup = async () => {
+  // Run all cleanup functions
+  for (const cleanupFn of cleanupFunctions) {
+    cleanupFn();
+  }
+  cleanupFunctions = [];
+  isInitialized = false;
+
+  // Remove all rules
+  try {
+    await browser.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: await getCurrentRuleIds(),
+    });
+  } catch (error) {
+    console.error(`Error removing rules: ${error}`);
+  }
+};
+
+const setupListeners = async () => {
+  if (isInitialized) {
+    return;
+  }
+  isInitialized = true;
+
+  // Listen for mapping changes
+  const unsubscribeMappings = onMappingsChange(async (mappings) => {
+    await updateRulesForMappings(mappings);
   });
+  cleanupFunctions.push(unsubscribeMappings);
 
-  preferredUserDomainObserver.addListener((domain) => {
-    preferredUserDomain = domain;
-  });
+  // Listen for cookie changes on dev domains
+  const cookieListener = async ({ cookie, removed }: browser.Cookies.OnChangedChangeInfoType) => {
+    if (cookie.domain.endsWith(NAV_DOMAIN_SUFFIX)) {
+      console.debug(`Cookie ${removed ? 'removed' : 'changed'} for ${cookie.domain}: ${cookie.name}=${cookie.value}`);
+      const mappings = await getActiveMappings();
+      await updateRulesForMappings(mappings);
+    }
+  };
+  browser.cookies.onChanged.addListener(cookieListener);
+  cleanupFunctions.push(() => browser.cookies.onChanged.removeListener(cookieListener));
 
-  setBadgeCount(employeeSessionCookie !== undefined, userSessionCookie !== undefined);
-
-  onPreferredDomainCookieChange(createRules);
-
-  // browser.storage.sync.onChanged.addListener(async (changes) => {
-  //   if (CookieName.EMPLOYEE in changes) {
-  //     const { newValue, oldValue } = changes[CookieName.EMPLOYEE];
-  //     console.log(`Preferred employee domain changed to ${newValue} from ${oldValue}`);
-  //     const { employeeCookie, userCookie } = await getSessionCookiesForPreferredDomain();
-  //     createRules(employeeCookie, userCookie);
-  //   } else if (CookieName.USER in changes) {
-  //     const { newValue, oldValue } = changes[CookieName.USER];
-  //     console.log(`Preferred user domain changed to ${newValue} from ${oldValue}`);
-  //     const { employeeCookie, userCookie } = await getSessionCookiesForPreferredDomain();
-  //     createRules(employeeCookie, userCookie);
-  //   }
-  // });
-
-  const { employeeCookie, userCookie } = await getSessionCookiesForPreferredDomain();
-  createRules(employeeCookie, userCookie);
+  // Initial setup
+  const mappings = await getActiveMappings();
+  await updateRulesForMappings(mappings);
 
   handleEnabled();
 };
 
-const createRules = async (employeeCookie: EmployeeCookie | null, userCookie: UserCookie | null) => {
-  const localhostCookies = await getLocalhostCookies();
+const init = async () => {
+  browser.action.setBadgeTextColor({ color: '#FFFFFF' });
 
-  console.log('Employee cookie:', employeeCookie);
-  console.log('User cookie:', userCookie);
-  console.log(`Local cookies:`, localhostCookies);
+  // Handle initial state
+  const { disabled } = await browser.storage.sync.get('disabled');
 
-  const cookies = localhostCookies.concat(employeeCookie ?? [], userCookie ?? []);
-
-  const rule: browser.DeclarativeNetRequest.Rule = {
-    id: SESSION_RULE_ID,
-    action: {
-      type: 'modifyHeaders',
-      requestHeaders: [
-        {
-          header: 'Cookie',
-          operation: 'set',
-          value: stringify(...cookies),
-        },
-        {
-          header: 'X-Nav-Dev-Sessions-Extension',
-          operation: 'set',
-          value: [employeeCookie?.name, userCookie?.name].filter((n): n is CookieName => n !== undefined).join(', '),
-        },
-      ],
-    },
-    condition: { initiatorDomains: ['localhost'], requestDomains: ['localhost'], regexFilter: URL_REGEX.source },
-    priority: 10,
-  };
-
-  try {
-    await browser.declarativeNetRequest.updateSessionRules({ removeRuleIds: [SESSION_RULE_ID], addRules: [rule] });
-
-    console.log('Created rule:', rule);
-  } catch (error) {
-    console.error(`Error creating rules: ${error}`);
+  if (disabled !== true) {
+    await setupListeners();
+  } else {
+    // Ensure rules are cleared when starting disabled
+    await cleanup();
   }
+
+  // Listen for disabled state changes
+  browser.storage.sync.onChanged.addListener(async (changes) => {
+    if ('disabled' in changes) {
+      const isDisabled = changes.disabled.newValue === true;
+
+      if (isDisabled) {
+        console.log('Extension disabled, cleaning up...');
+        await cleanup();
+      } else {
+        console.log('Extension enabled, setting up listeners...');
+        await setupListeners();
+      }
+    }
+  });
 };
-
-const URL_REGEX = /^(?:https?|wss?):\/\/localhost:\d{4}(?:$|\/.*)/;
-
-const stringify = (...cookies: browser.Cookies.Cookie[]): string =>
-  cookies.map(({ name, value }) => `${name}=${value}`).join('; ');
 
 init();
