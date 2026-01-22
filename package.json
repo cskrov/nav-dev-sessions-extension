@@ -1,6 +1,6 @@
 {
   "name": "nav-dev-sessions-extension",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Browser extension to map session cookies to localhost.",
   "scripts": {
     "build": "bun bun.build.ts",

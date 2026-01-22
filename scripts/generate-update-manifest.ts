@@ -38,7 +38,7 @@ const generateUpdateManifest = (): void => {
   const repoUrl = getRepoUrl();
   const addonId = getAddonId();
 
-  const updateLink = `${repoUrl}/releases/download/v${version}/firefox.xpi`;
+  const updateLink = `${repoUrl}/releases/download/v${version}/nav_dev_sessions_extension-v${version}-firefox.xpi`;
 
   const manifest: UpdateManifest = {
     addons: {
