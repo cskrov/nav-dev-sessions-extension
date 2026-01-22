@@ -43,7 +43,9 @@ jobs:
         env:
           WEB_EXT_API_KEY: ${{ secrets.WEB_EXT_API_KEY }}
           WEB_EXT_API_SECRET: ${{ secrets.WEB_EXT_API_SECRET }}
-        run: bun run firefox:sign
+        run: |
+          bun run firefox:sign
+          mv dist/*.xpi dist/nav_dev_sessions_extension-${{ github.ref_name }}-firefox.xpi
 
       - name: Release
         uses: ncipollo/release-action@v1

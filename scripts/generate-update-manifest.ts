@@ -57,7 +57,7 @@ const generateUpdateManifest = (): void => {
   mkdirSync(outputDir, { recursive: true });
 
   const outputPath = join(outputDir, 'updates.json');
-  writeFileSync(outputPath, JSON.stringify(manifest, null, '\t'));
+  writeFileSync(outputPath, JSON.stringify(manifest, null, '  '));
 
   console.log(`Generated update manifest at ${outputPath}`);
   console.log(`Addon ID: ${addonId}`);
