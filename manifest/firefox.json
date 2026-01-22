@@ -2,8 +2,6 @@
   "background": {
     "scripts": ["background.js"]
   },
-  "permissions": ["cookies", "storage", "tabs", "declarativeNetRequest", "*://*.dev.nav.no/", "*://localhost/"],
-  "host_permissions": [],
   "browser_specific_settings": {
     "gecko": {
       "id": "@nav-dev-sessions-extension",
