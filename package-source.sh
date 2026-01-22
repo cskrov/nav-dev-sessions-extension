@@ -15,7 +15,7 @@ rm -f "$ZIP_FILE"
 
 # Create the zip using git archive
 # Files excluded via .gitattributes with export-ignore
-git archive --format=zip --prefix=source-package/ -o "$ZIP_FILE" HEAD
+git archive --format=zip -o "$ZIP_FILE" HEAD
 
 echo "Source package created: $ZIP_FILE"
 echo "Contents:"

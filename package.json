@@ -7,8 +7,10 @@
     "dev": "bun run build --watch",
     "typecheck": "tsc --noEmit",
     "lint": "biome check",
-    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename=chrome.zip",
-    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename=firefox.zip"
+    "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename={name}-{version}-chrome.zip",
+    "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename={name}-{version}-firefox.zip",
+    "firefox:sign": "web-ext sign --source-dir=dist/firefox --artifacts-dir=dist --channel=unlisted --upload-source-code=source-package.zip",
+    "generate-update-manifest": "bun run scripts/generate-update-manifest.ts"
   },
   "license": "MIT",
   "dependencies": {
