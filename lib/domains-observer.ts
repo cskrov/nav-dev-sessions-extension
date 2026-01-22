@@ -8,7 +8,7 @@ interface DomainData {
   lastAccessed: number;
 }
 
-class DevDomainsObserver {
+class DomainsObserver {
   private domains: DomainData[] = [];
   private listeners: Listener[] = [];
   private initPromise: Promise<void>;
@@ -101,7 +101,7 @@ class DevDomainsObserver {
   }
 }
 
-export const devDomainsObserver = new DevDomainsObserver();
+export const domainsObserver = new DomainsObserver();
 
 const isDomainDataArray = (value: unknown): value is DomainData[] =>
   Array.isArray(value) && value.every((item) => item !== null && typeof item === 'object');

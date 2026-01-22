@@ -5,7 +5,7 @@ import { Button } from '@/app/button';
 import { Domain } from '@/app/domain';
 import { CookieName, getUserCookieName } from '@/lib/constants';
 import { cookieObserver } from '@/lib/cookie-observer';
-import { devDomainsObserver } from '@/lib/dev-domains-observer';
+import { domainsObserver } from '@/lib/domains-observer';
 import { addMapping, getMappings, type Mapping } from '@/lib/mappings';
 
 interface Props {
@@ -21,8 +21,8 @@ export const AddMappingPage = ({ onBack }: Props) => {
   const [portWarning, setPortWarning] = useState<string | null>(null);
 
   useEffect(() => {
-    devDomainsObserver.getDomains().then(setDomains);
-    const unsubscribe = devDomainsObserver.addListener(setDomains);
+    domainsObserver.getDomains().then(setDomains);
+    const unsubscribe = domainsObserver.addListener(setDomains);
     return unsubscribe;
   }, []);
 

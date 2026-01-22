@@ -4,13 +4,13 @@ import { handleEnabled } from '@/background/enable';
 import { setBadgeCount } from '@/lib/badge';
 import { CookieName, getUserCookieName, LOCALHOST, NAV_DOMAIN_SUFFIX } from '@/lib/constants';
 import { cookieObserver } from '@/lib/cookie-observer';
-import { devDomainsObserver } from '@/lib/dev-domains-observer';
+import { domainsObserver } from '@/lib/domains-observer';
 import { getMappings, type Mapping, onMappingsChange } from '@/lib/mappings';
 
 startCookiesSync();
 
 // Initialize dev domains observer to track visited domains
-devDomainsObserver.getDomains().then((domains) => {
+domainsObserver.getDomains().then((domains) => {
   console.log('Initial dev domains:', domains);
 });
 
