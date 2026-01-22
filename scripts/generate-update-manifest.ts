@@ -17,7 +17,7 @@ const getVersion = (): string => {
   if (!version) {
     throw new Error('VERSION environment variable is required');
   }
-  return version.replace(/^v/, '');
+  return version;
 };
 
 const getRepoUrl = (): string => {
@@ -38,7 +38,7 @@ const generateUpdateManifest = (): void => {
   const repoUrl = getRepoUrl();
   const addonId = getAddonId();
 
-  const updateLink = `${repoUrl}/releases/download/v${version}/nav_dev_sessions_extension-v${version}-firefox.xpi`;
+  const updateLink = `${repoUrl}/releases/download/${version}/nav_dev_sessions_extension-${version}-firefox.xpi`;
 
   const manifest: UpdateManifest = {
     addons: {

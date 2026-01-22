@@ -3,7 +3,6 @@
   "manifest_version": 3,
   "name": "Nav Dev Sessions Extension",
   "description": "Enables the user to set up mappings from nav.no domains to localhost ports, to copy session cookies to all requests to localhost.",
-  "version": "2.0.6",
   "icons": {
     "192": "images/logo192.png",
     "512": "images/logo512.png"
@@ -15,14 +14,6 @@
     },
     "default_popup": "popup.html"
   },
-  "permissions": [
-    "cookies",
-    "storage",
-    "tabs",
-    "declarativeNetRequest"
-  ],
-  "host_permissions": [
-    "*://*.dev.nav.no/",
-    "*://localhost/"
-  ]
+  "permissions": ["cookies", "storage", "tabs", "declarativeNetRequest"],
+  "host_permissions": ["*://*.nav.no/", "*://localhost/"]
 }
