@@ -5,6 +5,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "@nav-dev-sessions-extension",
+      "update_url": "https://cskrov.github.io/nav-dev-sessions-extension/updates.json",
       "data_collection_permissions": {
         "required": ["none"]
       }
