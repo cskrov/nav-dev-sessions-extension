@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check",
     "chrome:pack": "web-ext build --overwrite-dest --source-dir=dist/chrome --artifacts-dir=dist --filename={name}-chrome.zip",
+    "edge:pack": "web-ext build --overwrite-dest --source-dir=dist/edge --artifacts-dir=dist --filename={name}-edge.zip",
     "firefox:pack": "web-ext build --overwrite-dest --source-dir=dist/firefox --artifacts-dir=dist --filename={name}-firefox.zip",
     "firefox:sign": "web-ext sign --source-dir=dist/firefox --artifacts-dir=dist --channel=unlisted --upload-source-code=source-package.zip",
     "generate-update-manifest": "bun run scripts/generate-update-manifest.ts"

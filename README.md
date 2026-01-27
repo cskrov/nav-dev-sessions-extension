@@ -5,20 +5,22 @@ Browser extension that copies session cookies to requests for easier development
 ## Firefox
 [![Install for Firefox](https://img.shields.io/badge/Firefox-Install%20Extension%20(automatic%20updates)-FF7139?logo=firefox-browser&logoColor=white)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-firefox.xpi)
 
-## Chrome
-[![Install for Chrome](https://img.shields.io/badge/Chrome-Download%20Extension%20(manual%20install%20and%20updates)-4285F4?logo=google-chrome&logoColor=white)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-chrome.zip)
+## Chrome and Edge
+[![Download for Chrome](https://img.shields.io/badge/Chrome-Download%20Extension%20(manual%20install%20and%20updates)-4285F4?logo=googlechrome&logoColor=white)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-chrome.zip)
+[![Download for Edge](https://img.shields.io/badge/Edge-Download%20Extension%20(manual%20install%20and%20updates)-0078D7)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-edge.zip)
 
 1. Download
 2. Unzip
-3. Go to `chrome://extensions`
-4. Click "Load unpacked"
-5. Select `manifest.json`
+3. Go to `chrome://extensions` or `edge://extensions`
+4. Enable developer mode
+5. Click "Load unpacked"
+6. Select `manifest.json`
 
 ## Requirements
 Your local dev server must proxy requests to `dev` or `prod`.
 
 ## How to use
-1. Install the extension for your browser (Firefox or Chrome).
+1. Install the extension for your browser (Firefox, Chrome, or Edge).
 2. Open `dev` or `prod` in one tab and log in.
 3. Open your `localhost:<port>` application in another tab.
 4. Add a mapping from the `dev` or `prod` domain to `localhost:<port>`.
@@ -77,6 +79,9 @@ _You must build the extension before packaging it._
 
 ### Chrome
 `bun run chrome:pack`
+
+### Edge
+`bun run edge:pack`
 
 The packed extension will be in the `/dist` directory.
 

@@ -7,11 +7,13 @@ const stringify = (manifest: Manifest.WebExtensionManifest) => JSON.stringify(ma
 
 enum Browser {
   CHROME = 'chrome',
+  EDGE = 'edge',
   FIREFOX = 'firefox',
 }
 
 const BROWSER_NAMES: Record<Browser, string> = {
   [Browser.CHROME]: 'Chrome',
+  [Browser.EDGE]: 'Edge',
   [Browser.FIREFOX]: 'Firefox',
 };
 
