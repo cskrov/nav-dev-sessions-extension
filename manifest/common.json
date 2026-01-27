@@ -4,13 +4,14 @@
   "name": "Nav Dev Sessions Extension",
   "description": "Enables the user to set up mappings from nav.no domains to localhost ports, to copy session cookies to all requests to localhost.",
   "icons": {
-    "192": "images/logo192.png",
-    "512": "images/logo512.png"
+    "16": "images/logo16.png",
+    "48": "images/logo48.png",
+    "128": "images/logo128.png"
   },
   "action": {
     "default_icon": {
-      "192": "images/logo192.png",
-      "512": "images/logo512.png"
+      "16": "images/logo16.png",
+      "32": "images/logo32.png"
     },
     "default_popup": "popup.html"
   },

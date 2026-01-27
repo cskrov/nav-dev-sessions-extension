@@ -1,13 +1,13 @@
 import browser from 'webextension-polyfill';
 
 const NORMAL_ICONS = {
-  192: 'images/logo192.png',
-  512: 'images/logo512.png',
+  16: 'images/logo16.png',
+  32: 'images/logo32.png',
 };
 
 const DISABLED_ICONS = {
-  192: 'images/logo192-disabled.png',
-  512: 'images/logo512-disabled.png',
+  16: 'images/logo16-disabled.png',
+  32: 'images/logo32-disabled.png',
 };
 
 export const setIconEnabled = (enabled: boolean) => {
