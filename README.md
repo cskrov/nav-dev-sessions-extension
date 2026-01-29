@@ -19,7 +19,21 @@ _Single-click install and automatic updates!_
 6. Select `manifest.json`
 
 ## Requirements
-Your local dev server must proxy requests to `dev` or `prod`.
+- Your application in NAIS must offer the endpoints needed by your local application.
+   - Proxy requests to any API endpoints used by your application.
+- Your local development server must proxy requests to NAIS.
+
+### Vite example
+```js
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://your-app.intern.dev.nav.no',
+        changeOrigin: true,
+      },
+    },
+  },
+```
 
 ## How to use
 1. Install the extension for your browser (Firefox, Chrome, or Edge).
