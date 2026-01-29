@@ -49,7 +49,7 @@ const version = getVersion();
 const { outputs, logs, success } = await Bun.build({
   entrypoints: ['./app/popup.html', './background/background.ts'],
   minify: true,
-  sourcemap: 'external',
+  sourcemap: 'none',
   target: 'browser',
   format: 'esm',
   plugins: [
