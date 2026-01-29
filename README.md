@@ -26,7 +26,7 @@ Your local dev server must proxy requests to `dev` or `prod`.
 2. Open `dev` or `prod` in one tab and log in.
 3. Open your `localhost:<port>` application in another tab.
 4. Add a mapping from the `dev` or `prod` domain to `localhost:<port>`.
-    - The extension will detect the last active `localhost` port port automatically.
+    - The extension will detect the last active `localhost` port automatically.
 5. Enjoy seamless authentication for your `localhost` application!
     - Continue to use `dev` or `prod` in the first tab as normal.
 
