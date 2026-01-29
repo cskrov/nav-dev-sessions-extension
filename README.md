@@ -5,6 +5,8 @@ Browser extension that copies session cookies to requests for easier development
 ## Firefox
 [![Install for Firefox](https://img.shields.io/badge/Firefox-Install%20Extension%20(automatic%20updates)-FF7139?logo=firefox-browser&logoColor=white)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-firefox.xpi)
 
+_Single-click install and automatic updates!_
+
 ## Chrome and Edge
 [![Download for Chrome](https://img.shields.io/badge/Chrome-Download%20Extension%20(manual%20install%20and%20updates)-4285F4?logo=googlechrome&logoColor=white)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-chrome.zip)
 [![Download for Edge](https://img.shields.io/badge/Edge-Download%20Extension%20(manual%20install%20and%20updates)-0078D7)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-edge.zip)
