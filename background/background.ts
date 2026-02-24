@@ -175,13 +175,20 @@ const updateRulesForMappings = async (allMappings: Mapping[]) => {
     }
   }
 
+  // Deduplicate rules by ID (last one wins)
+  const deduplicatedRules = [...new Map(rules.map((r) => [r.id, r])).values()];
+
+  // Include new rule IDs in removeRuleIds to avoid "not unique" errors from race conditions
+  const newRuleIds = deduplicatedRules.map((r) => r.id);
+  const allRemoveIds = [...new Set([...existingRuleIds, ...newRuleIds])];
+
   try {
     await browser.declarativeNetRequest.updateSessionRules({
-      removeRuleIds: existingRuleIds,
-      addRules: rules,
+      removeRuleIds: allRemoveIds,
+      addRules: deduplicatedRules,
     });
 
-    console.log('Updated rules:', rules);
+    console.log('Updated rules:', deduplicatedRules);
   } catch (error) {
     console.error(`Error updating rules: ${error}`);
   }
