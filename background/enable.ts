@@ -4,7 +4,7 @@ import { getBadgeCount } from '@/lib/badge';
 import { LOCALHOST } from '@/lib/constants';
 
 export const getIsEnabled = (url: string | undefined): url is string => {
-  if (url === undefined) {
+  if (url === undefined || !URL.canParse(url)) {
     return false;
   }
 
