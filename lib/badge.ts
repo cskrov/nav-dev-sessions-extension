@@ -4,7 +4,7 @@ import { LOCALHOST } from '@/lib/constants';
 let currentCount = 0;
 
 const getIsEnabled = (url: string | undefined): url is string => {
-  if (url === undefined) {
+  if (url === undefined || !URL.canParse(url)) {
     return false;
   }
 
