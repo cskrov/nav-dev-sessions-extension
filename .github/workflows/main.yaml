@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Build extension
         id: build
@@ -45,12 +47,20 @@ jobs:
           mv dist/*.xpi dist/nav_dev_sessions_extension-firefox.xpi
 
       - name: Generate changelog
+        env:
+          VERSION: ${{ steps.build.outputs.version }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: |
           PREVIOUS_TAG=$(git tag --sort=-v:refname | head -n 1)
+          echo "## Changes" > RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
           if [ -n "$PREVIOUS_TAG" ]; then
-            git log "${PREVIOUS_TAG}..HEAD" --pretty=format:"- %s" > RELEASE_NOTES.md
+            git log "${PREVIOUS_TAG}..HEAD" --pretty=format:"- %s" >> RELEASE_NOTES.md
+            echo "" >> RELEASE_NOTES.md
+            echo "" >> RELEASE_NOTES.md
+            echo "**Full Changelog**: [${PREVIOUS_TAG}...${VERSION}](${REPO_URL}/compare/${PREVIOUS_TAG}...${VERSION})" >> RELEASE_NOTES.md
           else
-            git log --pretty=format:"- %s" > RELEASE_NOTES.md
+            git log --pretty=format:"- %s" >> RELEASE_NOTES.md
           fi
 
       - name: Release
