@@ -44,12 +44,21 @@ jobs:
           bun run firefox:sign
           mv dist/*.xpi dist/nav_dev_sessions_extension-firefox.xpi
 
+      - name: Generate changelog
+        run: |
+          PREVIOUS_TAG=$(git tag --sort=-v:refname | head -n 1)
+          if [ -n "$PREVIOUS_TAG" ]; then
+            git log "${PREVIOUS_TAG}..HEAD" --pretty=format:"- %s" > RELEASE_NOTES.md
+          else
+            git log --pretty=format:"- %s" > RELEASE_NOTES.md
+          fi
+
       - name: Release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.build.outputs.version }}
           artifacts: "dist/*.zip,dist/*.xpi"
-          generateReleaseNotes: true
+          bodyFile: "RELEASE_NOTES.md"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
