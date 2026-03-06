@@ -2,6 +2,8 @@
 
 Browser extension that copies session cookies to requests for easier development against `dev` and `prod` environments, from a `localhost` environment.
 
+_**Chrome and Edge do not support modifying WebSocket headers. Firefox does.**_
+
 ## Firefox
 [![Install for Firefox](https://img.shields.io/badge/Firefox-Install%20Extension%20(automatic%20updates)-FF7139?logo=firefox-browser&logoColor=white)](https://github.com/cskrov/nav-dev-sessions-extension/releases/latest/download/nav_dev_sessions_extension-firefox.xpi)
 
