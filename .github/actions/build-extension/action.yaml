@@ -3,7 +3,7 @@ description: "Shared build steps for the extension"
 
 inputs:
   run-checks:
-    description: "Run typecheck and lint before building"
+    description: "Run typecheck, lint and tests before building"
     required: false
     default: "false"
 
@@ -47,6 +47,11 @@ runs:
       if: inputs.run-checks == 'true'
       shell: bash
       run: bun run lint
+
+    - name: Test
+      if: inputs.run-checks == 'true'
+      shell: bash
+      run: bun run test
 
     - name: Build
       shell: bash
