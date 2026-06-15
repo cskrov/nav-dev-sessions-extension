@@ -13,6 +13,7 @@
     "firefox:sign": "web-ext sign --source-dir=dist/firefox --artifacts-dir=dist --channel=unlisted --upload-source-code=source-package.zip",
     "generate-update-manifest": "bun run scripts/generate-update-manifest.ts"
   },
+  "trustedDependencies": ["bun"],
   "license": "MIT",
   "dependencies": {
     "react": "19.2.7",
