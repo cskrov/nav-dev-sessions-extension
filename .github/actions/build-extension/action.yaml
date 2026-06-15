@@ -36,7 +36,7 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: bun install --frozen-lockfile
+      run: bun install --frozen-lockfile --ignore-scripts
 
     - name: Typecheck
       if: inputs.run-checks == 'true'
