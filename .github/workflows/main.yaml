@@ -51,7 +51,7 @@ jobs:
           VERSION: ${{ steps.build.outputs.version }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: |
-          PREVIOUS_TAG=$(git tag --sort=-v:refname | head -n 1)
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           echo "## Changes" > RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
           if [ -n "$PREVIOUS_TAG" ]; then
