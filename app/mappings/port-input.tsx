@@ -44,7 +44,7 @@ export const PortInput = ({ port, onPortChange }: PortInputProps) => {
 
   return (
     <label className="inline-flex w-fit flex-row items-center rounded-sm border border-gray-600 bg-gray-800 focus-within:border-sky-500">
-      <span className="py-1 pl-2 font-mono text-gray-400 text-md">localhost:</span>
+      <span className="text-md py-1 pl-2 font-mono text-gray-400">localhost:</span>
       <input
         type="text"
         value={input}
@@ -59,7 +59,7 @@ export const PortInput = ({ port, onPortChange }: PortInputProps) => {
         }}
         onKeyDown={onKeyDown}
         placeholder={suggestedPort.toString(10)}
-        className="w-20 bg-transparent py-1 pr-2 font-mono text-md text-white focus:outline-none"
+        className="text-md w-20 bg-transparent py-1 pr-2 font-mono text-white focus:outline-none"
         min="1"
         max="65535"
         inputMode="numeric"

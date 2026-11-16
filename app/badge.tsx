@@ -17,7 +17,7 @@ const VARIANT_CLASSES: Record<BadgeVariant, string> = {
 
 export const Badge = ({ children, variant = BadgeVariant.Gray }: Props) => (
   <span
-    className={`inline-flex items-center rounded px-1.5 py-0.5 font-medium font-mono text-xs ${VARIANT_CLASSES[variant]}`}
+    className={`inline-flex items-center rounded px-1.5 py-0.5 font-mono text-xs font-medium ${VARIANT_CLASSES[variant]}`}
   >
     {children}
   </span>

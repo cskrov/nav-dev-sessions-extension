@@ -85,7 +85,7 @@ export const EditMappingPage = ({ port, onBack, onAddNew }: Props) => {
         <span className="font-mono text-sky-400">:{port}</span>
       </PageHeader>
 
-      <p className="text-gray-400 text-sm">Select which domain to use for this port:</p>
+      <p className="text-sm text-gray-400">Select which domain to use for this port:</p>
 
       <ul className="flex max-h-64 flex-col gap-1 overflow-y-auto">
         {sortedMappings.map((mapping) => {

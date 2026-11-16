@@ -70,7 +70,7 @@ const Popup = () => {
         Session cookie mappings
       </PageHeader>
 
-      <p className="text-gray-400 text-sm">
+      <p className="text-sm text-gray-400">
         Session cookies are copied for the following localhost ports and domain pairs:
       </p>
 

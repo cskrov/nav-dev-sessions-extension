@@ -28,7 +28,11 @@
     "rules": {
       "preset": "recommended",
       "nursery": {
-        "useSortedClasses": { "level": "error", "fix": "safe", "options": {} }
+        "useTailwindSortedClasses": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        }
       },
       "correctness": {
         "noUndeclaredDependencies": "off",

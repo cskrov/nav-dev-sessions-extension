@@ -1,8 +1,13 @@
 # Exclude from git archive (used for Firefox source code submission)
-.github/ export-ignore
-.vscode/ export-ignore
-.gitattributes export-ignore
-.gitignore export-ignore
+.* export-ignore
+# GitHub Actions downloads `$/` actions as a repository archive, which respects
+# export-ignore, so .github/ must stay. package-source.sh excludes it instead.
+.github -export-ignore
+# Pins the Bun version reviewers need to reproduce the build
+.tool-versions -export-ignore
 AGENTS.md export-ignore
+biome.json export-ignore
 package-source.sh export-ignore
+screenshots/ export-ignore
+scripts/ export-ignore
 source-package.zip export-ignore

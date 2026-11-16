@@ -17,7 +17,7 @@ export const PageHeader = ({ children, onBack, action }: Props) => (
         <img src="./images/logo192.png" alt="Logo" className="h-6 w-6" />
       )}
     </div>
-    <h2 className="font-bold text-base">{children}</h2>
+    <h2 className="text-base font-bold">{children}</h2>
     {action !== undefined ? <div className="ml-auto">{action}</div> : null}
   </div>
 );

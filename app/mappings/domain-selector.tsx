@@ -51,7 +51,7 @@ export const DomainSelector = ({ onSelectDomain, excludeDomains = [] }: Props) =
   const availableDomains = domains.filter((d) => !excludeSet.has(d));
 
   if (availableDomains.length === 0) {
-    return <p className="text-gray-400 text-sm italic">No domains available. Log in to a *.nav.no site first.</p>;
+    return <p className="text-sm text-gray-400 italic">No domains available. Log in to a *.nav.no site first.</p>;
   }
 
   const filteredDomains =
@@ -69,7 +69,7 @@ export const DomainSelector = ({ onSelectDomain, excludeDomains = [] }: Props) =
       />
       <ul className="flex max-h-64 flex-col gap-1 overflow-y-auto" tabIndex={-1}>
         {filteredDomains.length === 0 ? (
-          <li className="px-2 py-1 text-gray-400 text-sm italic">No domains match your filter.</li>
+          <li className="px-2 py-1 text-sm text-gray-400 italic">No domains match your filter.</li>
         ) : (
           filteredDomains
             .map((domain) => {

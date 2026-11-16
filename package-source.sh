@@ -14,8 +14,9 @@ cd "$SCRIPT_DIR"
 rm -f "$ZIP_FILE"
 
 # Create the zip using git archive
-# Files excluded via .gitattributes with export-ignore
-git archive --format=zip -o "$ZIP_FILE" HEAD
+# Files excluded via .gitattributes with export-ignore, plus .github/ which
+# must stay in GitHub's repository archives for `$/` action references
+git archive --format=zip -o "$ZIP_FILE" HEAD -- . ":(exclude).github"
 
 echo "Source package created: $ZIP_FILE"
 echo "Contents:"

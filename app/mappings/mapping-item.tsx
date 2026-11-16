@@ -31,7 +31,7 @@ export const MappingItem = ({ activeMapping, alternativeCount, cookies, onClick 
       >
         <div className="flex grow flex-col gap-0.5">
           <div className="flex flex-row items-center gap-1">
-            <span className="font-mono text-sky-400 text-sm">:{activeMapping.port}</span>
+            <span className="font-mono text-sm text-sky-400">:{activeMapping.port}</span>
             <Icon icon="mdi:arrow-left" className="text-gray-500" />
             <Domain>{activeMapping.domain}</Domain>
           </div>
@@ -56,7 +56,7 @@ export const MappingItem = ({ activeMapping, alternativeCount, cookies, onClick 
         </div>
         <div className="flex flex-row items-center gap-1">
           {alternativeCount > 0 ? <Badge>+{alternativeCount}</Badge> : null}
-          <Icon icon="mdi:chevron-right" className="text-gray-500 text-xl" />
+          <Icon icon="mdi:chevron-right" className="text-xl text-gray-500" />
         </div>
       </button>
     </li>

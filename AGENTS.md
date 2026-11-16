@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## Commands
+
 - Install dependencies: `bun i`
 - Build: `bun run build`
 - Build dev (watch): `bun dev`
@@ -9,6 +10,7 @@
 - Lint and fix code: `bun lint --fix`
 
 ## Code style
+
 - TypeScript strict mode
 - No implicit boolean conversions
 - No type coercion

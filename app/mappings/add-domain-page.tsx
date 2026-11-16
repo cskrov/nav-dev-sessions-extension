@@ -34,7 +34,7 @@ export const AddDomainPage = ({ port, onBack }: Props) => {
         Add domain to <span className="font-mono text-sky-400">:{port}</span>
       </PageHeader>
 
-      <p className="text-gray-400 text-sm">Click a domain to add:</p>
+      <p className="text-sm text-gray-400">Click a domain to add:</p>
 
       <DomainSelector onSelectDomain={handleSelectDomain} excludeDomains={existingDomains} />
     </PageContainer>

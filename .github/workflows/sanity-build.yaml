@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
 
       - name: Build extension
-        uses: ./.github/actions/build-extension
+        uses: $/.github/actions/build-extension
         with:
           run-checks: "true"

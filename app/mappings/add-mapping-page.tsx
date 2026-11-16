@@ -33,11 +33,11 @@ export const AddMappingPage = ({ onBack }: Props) => {
     <PageContainer>
       <PageHeader onBack={onBack}>Add Mapping</PageHeader>
 
-      <p className="text-gray-400 text-sm">Map session cookies to:</p>
+      <p className="text-sm text-gray-400">Map session cookies to:</p>
 
       <PortInput port={port} onPortChange={setPort} />
 
-      <p className="text-gray-400 text-sm">Select a domain to add:</p>
+      <p className="text-sm text-gray-400">Select a domain to add:</p>
 
       {isValidPort ? (
         <DomainSelector onSelectDomain={handleSelectDomain} excludeDomains={existingDomains} />
